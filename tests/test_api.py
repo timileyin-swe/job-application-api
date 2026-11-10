@@ -77,3 +77,10 @@ def test_openapi_documents_endpoints(client):
     schema = client.get('/openapi.json').json()
     assert 'post' in schema['paths']['/applications']
     assert 'patch' in schema['paths']['/applications/{application_id}/status']
+
+
+def test_status_counts(client):
+    assert client.get('/reports/status-counts').json() == {}
+    for status in ['applied', 'offer', 'applied']:
+        client.post('/applications', json=record(status=status))
+    assert client.get('/reports/status-counts').json() == {'applied': 2, 'offer': 1}

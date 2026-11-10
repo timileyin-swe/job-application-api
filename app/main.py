@@ -93,6 +93,14 @@ def create_app(database_path=None):
                 'SELECT * FROM applications WHERE id=?', (application_id,)
             ).fetchone())
 
+    @api.get('/reports/status-counts', response_model=dict[str, int])
+    def status_counts():
+        with connect() as connection:
+            rows = connection.execute(
+                'SELECT status, COUNT(*) AS total FROM applications GROUP BY status'
+            )
+            return {row['status']: row['total'] for row in rows}
+
     return api
 
 
