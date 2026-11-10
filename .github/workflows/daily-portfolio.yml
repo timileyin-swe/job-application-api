@@ -23,8 +23,8 @@ jobs:
           REPO: ${{ github.repository }}
           OWNER: ${{ github.repository_owner }}
         run: |
-          candidate=$(gh pr list --repo "$REPO" --base main --draft --limit 100 --json number,headRefName,headRefOid,isCrossRepository,author |
-            jq -c --arg owner "$OWNER" '[.[] | select(.author.login == $owner and (.isCrossRepository | not) and (.headRefName | startswith("portfolio/")))] | sort_by(.number) | first // empty')
+          candidate=$(gh pr list --repo "$REPO" --base main --limit 100 --json labels,number,headRefName,headRefOid,isCrossRepository,author |
+            jq -c --arg owner "$OWNER" '[.[] | select((all(.labels[]; .name != "cloud-tested")) and .author.login == $owner and (.isCrossRepository | not) and (.headRefName | startswith("portfolio/")))] | sort_by(.number) | first // empty')
           if [[ -n "$candidate" ]]; then
             echo "number=$(jq -r .number <<< "$candidate")" >> "$GITHUB_OUTPUT"
             echo "head=$(jq -r .headRefOid <<< "$candidate")" >> "$GITHUB_OUTPUT"
@@ -58,7 +58,7 @@ jobs:
     permissions:
       pull-requests: write
     steps:
-      - name: Mark the tested draft ready for review
+      - name: Label the tested contribution
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -66,4 +66,4 @@ jobs:
           EXPECTED: ${{ needs.select.outputs.head }}
         run: |
           test "$(gh pr view "$PR" --repo "$REPO" --json headRefOid --jq .headRefOid)" = "$EXPECTED"
-          gh pr ready "$PR" --repo "$REPO"
+          gh api --method POST "repos/$REPO/issues/$PR/labels" -f 'labels[]=cloud-tested'
