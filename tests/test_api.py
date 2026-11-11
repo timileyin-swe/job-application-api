@@ -84,3 +84,10 @@ def test_get_one_application(client):
     assert client.get(f"/applications/{created['id']}").json() == created
     assert client.get('/applications/999').status_code == 404
     assert client.get('/applications/0').status_code == 422
+
+
+def test_status_counts(client):
+    assert client.get('/reports/status-counts').json() == {}
+    for status in ['applied', 'offer', 'applied']:
+        client.post('/applications', json=record(status=status))
+    assert client.get('/reports/status-counts').json() == {'applied': 2, 'offer': 1}
