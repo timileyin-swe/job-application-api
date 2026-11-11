@@ -93,6 +93,16 @@ def create_app(database_path=None):
                 'SELECT * FROM applications WHERE id=?', (application_id,)
             ).fetchone())
 
+    @api.get('/applications/{application_id}', response_model=Application)
+    def get_application(application_id: Annotated[int, PathParameter(gt=0)]):
+        with connect() as connection:
+            row = connection.execute(
+                'SELECT * FROM applications WHERE id=?', (application_id,)
+            ).fetchone()
+        if row is None:
+            raise HTTPException(status_code=404, detail='Application not found')
+        return dict(row)
+
     @api.get('/reports/status-counts', response_model=dict[str, int])
     def status_counts():
         with connect() as connection:
