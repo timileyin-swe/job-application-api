@@ -23,6 +23,8 @@ to use another path. Personal databases and environment files are ignored by Git
 | `POST /applications` | Add an application | 201 |
 | `GET /applications` | List newest application dates first | 200 |
 | `GET /applications?status=interview` | Filter by status | 200 |
+| `GET /applications/{id}` | Look up one application by its returned ID | 200 |
+| `GET /reports/status-counts` | Count applications in each occupied status | 200 |
 | `PATCH /applications/1/status` | Update only the status | 200 |
 
 Example creation body:
@@ -36,6 +38,8 @@ Statuses: `applied`, `interview`, `offer`, `rejected`, `withdrawn`.
 Invalid input returns 422; updating a missing application returns 404.
 Company and role are trimmed, required, and limited to 120 characters.
 Unknown body fields are rejected to catch misspelled inputs.
+
+To try the report in `/docs`, create an application, copy its returned ID, and update its status to `interview`. Fetch it by ID and open `/reports/status-counts`. On a fresh database the report now returns `{"interview": 1}`. An empty database returns `{}`.
 
 ## Verify
 
