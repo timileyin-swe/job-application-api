@@ -91,3 +91,10 @@ def test_status_counts(client):
     for status in ['applied', 'offer', 'applied']:
         client.post('/applications', json=record(status=status))
     assert client.get('/reports/status-counts').json() == {'applied': 2, 'offer': 1}
+
+
+def test_report_after_last_application_leaves_status(client):
+    created = client.post('/applications', json=record()).json()
+    response = client.patch(f"/applications/{created['id']}/status", json={'status': 'interview'})
+    assert response.status_code == 200
+    assert client.get('/reports/status-counts').json() == {'interview': 1}
