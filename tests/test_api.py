@@ -91,3 +91,13 @@ def test_status_counts(client):
     for status in ['applied', 'offer', 'applied']:
         client.post('/applications', json=record(status=status))
     assert client.get('/reports/status-counts').json() == {'applied': 2, 'offer': 1}
+
+
+
+def test_company_filter_combines_with_status(client):
+    for company, status in [('Acme', 'offer'), ('Acme', 'applied'), ('Acme Labs', 'offer')]:
+        client.post('/applications', json=record(company=company, status=status))
+    matches = client.get('/applications', params={'company': ' acme '}).json()
+    assert [row['id'] for row in matches] == [2, 1]
+    offers = client.get('/applications', params={'company': 'ACME', 'status': 'offer'}).json()
+    assert [row['id'] for row in offers] == [1]
