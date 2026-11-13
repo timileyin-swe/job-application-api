@@ -22,6 +22,7 @@ to use another path. Personal databases and environment files are ignored by Git
 | --- | --- | --- |
 | `POST /applications` | Add an application | 201 |
 | `GET /applications` | List newest application dates first | 200 |
+| `GET /applications?company=Acme` | Find applications for one company | 200 |
 | `GET /applications?status=interview` | Filter by status | 200 |
 | `GET /applications/{id}` | Look up one application by its returned ID | 200 |
 | `GET /reports/status-counts` | Count applications in each occupied status | 200 |

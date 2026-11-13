@@ -98,3 +98,12 @@ def test_report_after_last_application_leaves_status(client):
     response = client.patch(f"/applications/{created['id']}/status", json={'status': 'interview'})
     assert response.status_code == 200
     assert client.get('/reports/status-counts').json() == {'interview': 1}
+
+
+def test_company_filter_combines_with_status(client):
+    for company, status in [('Acme', 'offer'), ('Acme', 'applied'), ('Acme Labs', 'offer')]:
+        client.post('/applications', json=record(company=company, status=status))
+    matches = client.get('/applications', params={'company': ' acme '}).json()
+    assert [row['id'] for row in matches] == [2, 1]
+    offers = client.get('/applications', params={'company': 'ACME', 'status': 'offer'}).json()
+    assert [row['id'] for row in offers] == [1]

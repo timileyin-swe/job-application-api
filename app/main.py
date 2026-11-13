@@ -70,12 +70,18 @@ def create_app(database_path=None):
             return {'id': cursor.lastrowid, **application.model_dump()}
 
     @api.get('/applications', response_model=list[Application])
-    def list_applications(status: Status | None = None):
+    def list_applications(status: Status | None = None, company: str | None = None):
         query = 'SELECT * FROM applications'
-        parameters = ()
+        conditions = []
+        parameters = []
         if status is not None:
-            query += ' WHERE status=?'
-            parameters = (status,)
+            conditions.append('status=?')
+            parameters.append(status)
+        if company is not None:
+            conditions.append('company = ? COLLATE NOCASE')
+            parameters.append(company.strip())
+        if conditions:
+            query += ' WHERE ' + ' AND '.join(conditions)
         query += ' ORDER BY applied_on DESC, id DESC'
         with connect() as connection:
             return [dict(row) for row in connection.execute(query, parameters)]
