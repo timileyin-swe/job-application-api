@@ -84,3 +84,9 @@ own sake. Development used AI assistance; personal mastery requires the exercise
 
 Sources: [FastAPI request bodies](https://fastapi.tiangolo.com/tutorial/body/)
 and [testing](https://fastapi.tiangolo.com/tutorial/testing/).
+
+## Run the sample
+
+After installing the requirements, run `python demo.py` with your virtual environment active.
+The script creates a fictional application, moves it to interview, and prints the interview count.
+It calls the API in process and removes its temporary database when finished.
