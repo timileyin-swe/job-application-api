@@ -107,3 +107,25 @@ def test_company_filter_combines_with_status(client):
     assert [row['id'] for row in matches] == [2, 1]
     offers = client.get('/applications', params={'company': 'ACME', 'status': 'offer'}).json()
     assert [row['id'] for row in offers] == [1]
+
+
+def test_application_date_range(client):
+    for day in ['2026-01-31', '2026-02-01', '2026-02-28', '2026-03-01']:
+        client.post('/applications', json=record(applied_on=day))
+    response = client.get('/applications', params={
+        'applied_from': '2026-02-01', 'applied_to': '2026-02-28',
+        'company': 'Example Ltd', 'status': 'applied',
+    })
+    assert response.status_code == 200
+    assert [row['id'] for row in response.json()] == [3, 2]
+    assert len(client.get('/applications?applied_from=2026-02-28').json()) == 2
+    assert len(client.get('/applications?applied_to=2026-02-01').json()) == 2
+    assert client.get('/applications?applied_from=2027-01-01').json() == []
+
+
+@pytest.mark.parametrize('query', [
+    'applied_from=invalid', 'applied_to=2026-02-30',
+    'applied_from=2026-03-01&applied_to=2026-02-01',
+])
+def test_invalid_date_range(client, query):
+    assert client.get('/applications?' + query).status_code == 422

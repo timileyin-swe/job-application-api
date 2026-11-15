@@ -70,7 +70,14 @@ def create_app(database_path=None):
             return {'id': cursor.lastrowid, **application.model_dump()}
 
     @api.get('/applications', response_model=list[Application])
-    def list_applications(status: Status | None = None, company: str | None = None):
+    def list_applications(
+        status: Status | None = None,
+        company: str | None = None,
+        applied_from: date | None = None,
+        applied_to: date | None = None,
+    ):
+        if applied_from and applied_to and applied_from > applied_to:
+            raise HTTPException(status_code=422, detail='applied_from must not exceed applied_to')
         query = 'SELECT * FROM applications'
         conditions = []
         parameters = []
@@ -80,6 +87,12 @@ def create_app(database_path=None):
         if company is not None:
             conditions.append('company = ? COLLATE NOCASE')
             parameters.append(company.strip())
+        if applied_from is not None:
+            conditions.append('applied_on >= ?')
+            parameters.append(applied_from.isoformat())
+        if applied_to is not None:
+            conditions.append('applied_on <= ?')
+            parameters.append(applied_to.isoformat())
         if conditions:
             query += ' WHERE ' + ' AND '.join(conditions)
         query += ' ORDER BY applied_on DESC, id DESC'
