@@ -90,3 +90,10 @@ and [testing](https://fastapi.tiangolo.com/tutorial/testing/).
 After installing the requirements, run `python demo.py` with your virtual environment active.
 The script creates a fictional application, moves it to interview, and prints the interview count.
 It calls the API in process and removes its temporary database when finished.
+
+## Filter by application date
+
+Use `GET /applications?applied_from=2026-02-01&applied_to=2026-02-28`
+to list February applications. Both boundaries are inclusive and either can
+be omitted. Date filters combine with company and status filters. Invalid dates
+or a start date after the end date return 422.
