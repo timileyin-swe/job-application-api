@@ -97,3 +97,9 @@ Use `GET /applications?applied_from=2026-02-01&applied_to=2026-02-28`
 to list February applications. Both boundaries are inclusive and either can
 be omitted. Date filters combine with company and status filters. Invalid dates
 or a start date after the end date return 422.
+
+## Check the running service
+
+Request `GET /health` to check that the API can read its application table.
+A healthy service returns HTTP 200 and `{"status":"ok"}`. A database failure
+returns HTTP 500. This read-only check works with an empty database.

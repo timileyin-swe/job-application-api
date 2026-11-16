@@ -59,6 +59,12 @@ def create_app(database_path=None):
 
     api = FastAPI(title='Job Application API', version='0.1.0', lifespan=lifespan)
 
+    @api.get('/health', response_model=dict[str, str])
+    def health():
+        with connect() as connection:
+            connection.execute('SELECT 1 FROM applications LIMIT 1')
+        return {'status': 'ok'}
+
     @api.post('/applications', response_model=Application, status_code=201)
     def add_application(application: NewApplication):
         with connect() as connection:
