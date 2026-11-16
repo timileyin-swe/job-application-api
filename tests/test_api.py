@@ -129,3 +129,19 @@ def test_application_date_range(client):
 ])
 def test_invalid_date_range(client, query):
     assert client.get('/applications?' + query).status_code == 422
+
+
+def test_health_checks_database_without_creating_applications(client):
+    assert client.get('/health').status_code == 200
+    assert client.get('/health').json() == {'status': 'ok'}
+    assert client.get('/applications').json() == []
+
+
+def test_health_does_not_report_ok_for_missing_table(tmp_path):
+    import sqlite3
+
+    database = tmp_path / 'health.db'
+    with TestClient(create_app(database), raise_server_exceptions=False) as client:
+        with sqlite3.connect(database) as connection:
+            connection.execute('DROP TABLE applications')
+        assert client.get('/health').status_code == 500
