@@ -102,4 +102,4 @@ or a start date after the end date return 422.
 
 Request `GET /health` to check that the API can read its application table.
 A healthy service returns HTTP 200 and `{"status":"ok"}`. A database failure
-returns HTTP 500. This read-only check works with an empty database.
+returns HTTP 503 with a "Database unavailable" message. This read-only check works with an empty database.
