@@ -144,4 +144,6 @@ def test_health_does_not_report_ok_for_missing_table(tmp_path):
     with TestClient(create_app(database), raise_server_exceptions=False) as client:
         with sqlite3.connect(database) as connection:
             connection.execute('DROP TABLE applications')
-        assert client.get('/health').status_code == 500
+        response = client.get('/health')
+        assert response.status_code == 503
+        assert response.json() == {'detail': 'Database unavailable'}

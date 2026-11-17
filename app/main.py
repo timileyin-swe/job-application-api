@@ -61,8 +61,11 @@ def create_app(database_path=None):
 
     @api.get('/health', response_model=dict[str, str])
     def health():
-        with connect() as connection:
-            connection.execute('SELECT 1 FROM applications LIMIT 1')
+        try:
+            with connect() as connection:
+                connection.execute('SELECT 1 FROM applications LIMIT 1')
+        except sqlite3.Error:
+            raise HTTPException(status_code=503, detail='Database unavailable') from None
         return {'status': 'ok'}
 
     @api.post('/applications', response_model=Application, status_code=201)
