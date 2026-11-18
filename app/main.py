@@ -13,7 +13,14 @@ Status = Literal['applied', 'interview', 'offer', 'rejected', 'withdrawn']
 
 
 class NewApplication(BaseModel):
-    model_config = ConfigDict(str_strip_whitespace=True, extra='forbid')
+    model_config = ConfigDict(
+        str_strip_whitespace=True,
+        extra='forbid',
+        json_schema_extra={'examples': [{
+            'company': 'Example Ltd', 'role': 'Python Intern',
+            'applied_on': '2026-11-09', 'status': 'applied',
+        }]},
+    )
     company: str = Field(min_length=1, max_length=120)
     role: str = Field(min_length=1, max_length=120)
     applied_on: date
@@ -21,6 +28,10 @@ class NewApplication(BaseModel):
 
 
 class Application(NewApplication):
+    model_config = ConfigDict(json_schema_extra={'examples': [{
+        'id': 1, 'company': 'Example Ltd', 'role': 'Python Intern',
+        'applied_on': '2026-11-09', 'status': 'applied',
+    }]})
     id: int
 
 

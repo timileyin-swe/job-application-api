@@ -147,3 +147,11 @@ def test_health_does_not_report_ok_for_missing_table(tmp_path):
         response = client.get('/health')
         assert response.status_code == 503
         assert response.json() == {'detail': 'Database unavailable'}
+
+
+def test_openapi_creation_example_can_be_submitted(client):
+    schemas = client.get('/openapi.json').json()['components']['schemas']
+    example = schemas['NewApplication']['examples'][0]
+    response = client.post('/applications', json=example)
+    assert response.status_code == 201
+    assert response.json() == schemas['Application']['examples'][0]

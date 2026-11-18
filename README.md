@@ -103,3 +103,7 @@ or a start date after the end date return 422.
 Request `GET /health` to check that the API can read its application table.
 A healthy service returns HTTP 200 and `{"status":"ok"}`. A database failure
 returns HTTP 503 with a "Database unavailable" message. This read-only check works with an empty database.
+
+Swagger UI at `/docs` includes a valid fictional application example.
+Expand `POST /applications`, choose **Try it out**, and execute the example
+to create a record. Use the returned ID when looking it up or changing its status.
