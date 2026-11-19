@@ -88,7 +88,15 @@ and [testing](https://fastapi.tiangolo.com/tutorial/testing/).
 ## Run the sample
 
 After installing the requirements, run `python demo.py` with your virtual environment active.
-The script creates a fictional application, moves it to interview, and prints the interview count.
+The script creates a fictional application, moves it to interview, then combines
+company, status, and inclusive date filters to find November interviews. It prints
+the matching count and the overall interview count. Expected output:
+
+```text
+November interviews at Example Ltd: 1
+Application 1: interview
+Interviews: 1
+```
 It calls the API in process and removes its temporary database when finished.
 
 ## Filter by application date

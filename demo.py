@@ -24,6 +24,12 @@ def main():
             updated.raise_for_status()
             report = client.get("/reports/status-counts")
             report.raise_for_status()
+            matches = client.get("/applications", params={
+                "company": "Example Ltd", "status": "interview",
+                "applied_from": "2026-11-01", "applied_to": "2026-11-30",
+            })
+            matches.raise_for_status()
+            print("November interviews at Example Ltd:", len(matches.json()))
             print(f"Application {application_id}: {updated.json()['status']}")
             print("Interviews:", report.json()["interview"])
 
