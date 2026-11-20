@@ -13,5 +13,8 @@ def test_demo_runs_twice_without_touching_configured_database(tmp_path):
             env={**os.environ, "APPLICATIONS_DB": str(database)},
             check=True, capture_output=True, text=True,
         )
-        assert result.stdout.splitlines() == ["Application 1: interview", "Interviews: 1"]
+        assert result.stdout.splitlines() == [
+            "November interviews at Example Ltd: 1",
+            "Application 1: interview", "Interviews: 1",
+        ]
     assert not database.exists()
